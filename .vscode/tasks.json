@@ -1,0 +1,40 @@
+{
+    "tasks": [
+        {
+            "label": "Build kernel",
+            "type": "cppbuild",
+            "command": "/usr/bin/make",
+            "args": ["-j", "$(nproc)"],
+            "options": {
+                "cwd": "${workspaceRoot}"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+        },
+        {
+            "label": "Setup Ramdisk",
+            "type": "process",
+            "command":"${workspaceRoot}/.vscode/setup",
+            "args": [
+                "${workspaceRoot}/",
+            ],
+        },
+        {
+            "label": "Launch Qemu",
+            "type": "process",
+            "command":"${workspaceRoot}/.vscode/launch",
+            "args": [
+                "${workspaceRoot}/arch/x86_64/boot/bzImage",
+                "${workspaceRoot}/initrd.img",
+                "1",
+                "9.4.2",
+                "${workspaceRoot}"
+            ],
+            "dependsOn": ["Setup Ramdisk"],
+        }
+    ],
+
+    "version": "2.0.0"
+}

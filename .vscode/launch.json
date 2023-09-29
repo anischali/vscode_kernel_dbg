@@ -1,0 +1,31 @@
+{
+    "configurations": [
+
+        {
+            "type": "cppdbg",
+            "name": "Debug kernel",
+            "request": "launch",
+            "cwd": "${workspaceRoot}",
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {"text": "symbol-file ${workspaceRoot}/vmlinux"}
+            ],
+            "targetArchitecture": "x86_64",
+            "program": "${workspaceRoot}/vmlinux",
+            "miDebuggerServerAddress": "localhost:1234",
+            "additionalSOLibSearchPath": "${workspaceRoot}/**",
+            "sourceFileMap":{
+                "system_map": "${workspaceRoot}/System.map"
+            },
+            "symbolLoadInfo": {
+                "loadAll": true,
+                "exceptionList": ""
+            },
+        }
+    ],
+}

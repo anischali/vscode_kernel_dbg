@@ -1,0 +1,29 @@
+#! /bin/bash
+
+kernel="${1}"
+ramdisk="${2}"
+usb_bus="${3}"
+usb_port="${4}"
+share_folder="${5}"
+debug="${6}"
+
+if [ -n "${debug}" ]; then
+    debug="-s -S"
+fi
+
+qemu-system-x86_64 \
+    -kernel "${kernel}" \
+    -display none \
+    -serial mon:stdio \
+    -cpu host \
+    -append "console=ttyS0 rw earlyprintk nokaslr" \
+    -enable-kvm \
+    -initrd "${ramdisk}"  \
+    -m 1024 \
+    -device usb-ehci,id=ehci \
+    -device usb-host,bus=ehci.0,hostbus="${usb_bus}",hostport="${usb_port}" \
+    -virtfs local,path=${share_folder},mount_tag=share,security_model=passthrough,id=share \
+    -net nic \
+    -smp 2 \
+    ${debug}
+

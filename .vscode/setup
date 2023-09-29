@@ -1,0 +1,52 @@
+#! /bin/bash
+
+dir="$1"
+force="$2"
+
+
+if [ -e "${dir}/initrd.img" ] && [ -z "${force}" ]; then
+    exit 0
+fi
+
+if [ -e "${dir}/initrd.img" ]; then
+    rm "${dir}/initrd.img"
+fi
+
+mkdir -p "${dir}/initramfs"
+pushd "${dir}/initramfs"
+mkdir dev sys proc bin sbin var run lib tmp etc
+curl -L -o bin/busybox https://busybox.net/downloads/binaries/1.21.1/busybox-x86_64
+cat << EOF > init
+#! /bin/busybox sh
+
+trap '' INT QUIT TSTP
+
+mount -t devtmpfs devtmpfs /dev
+mount -t proc proc /proc
+mount -t sysfs sysfs /sys
+mount -t tmpfs tmpfs /tmp
+mount -t tmpfs tmpfs /run
+
+sh
+EOF
+
+cat << EOF > etc/inittab
+ttyS0::respawn:/bin/sh
+EOF
+
+chmod +x init
+chmod +x bin/busybox
+bin/busybox --install -s bin/
+
+mkdir packages
+pushd packages
+apt download libc6
+apt download evtest
+for p in *.deb; do 
+    dpkg-deb -x $p ../
+done
+popd
+find . | cpio --dereference -ov --format=newc | gzip --fast > ../initrd.img
+popd
+
+rm -rf "${dir}/initramfs"
