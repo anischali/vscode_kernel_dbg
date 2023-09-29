@@ -40,6 +40,6 @@
         "exceptionList": ""
       },
       "preLaunchTask": "Launch Qemu"
-    }
+    },
   ]
 }

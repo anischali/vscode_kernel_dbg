@@ -12,6 +12,8 @@
                 "kind": "build",
                 "isDefault": true
             },
+            "dependsOrder": "sequence",
+            "dependsOn":["Merge Defconfig"],
         },
         {
             "label": "Setup Ramdisk",
@@ -20,6 +22,17 @@
             "args": [
                 "${workspaceRoot}/",
             ],
+            "isBackground": true,
+        },
+        {
+            "label": "Merge Defconfig",
+            "type": "process",
+            "command":"${workspaceRoot}/scripts/kconfig/merge_config.sh",
+            "args": [
+                "${workspaceRoot}/.config",
+                "${workspaceRoot}/.vscode/config/extra_defconfig",
+            ],
+            "isBackground": true,
         },
         {
             "label": "Launch Qemu",
@@ -45,7 +58,7 @@
                 }
             },
             "dependsOrder": "sequence",
-            "dependsOn": ["Build kernel", "Setup Ramdisk"],
+            "dependsOn": ["Setup Ramdisk", "Build kernel"],
         }
     ],
 
