@@ -18,7 +18,7 @@ qemu-system-x86_64 \
     -display none \
     -serial mon:stdio \
     -cpu host \
-    -append "console=ttyS0 rw earlyprintk nokaslr" \
+    -append "console=ttyS0 rw earlyprintk nokaslr nolapic_timer=1 noapictimer=1 disable_cpu_apicid=1" \
     -enable-kvm \
     -initrd "${ramdisk}"  \
     -m 1024 \
