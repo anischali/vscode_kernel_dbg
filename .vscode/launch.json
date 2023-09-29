@@ -32,17 +32,5 @@
       },
       "preLaunchTask": "Launch Qemu"
     },
-    {
-      "name": "C/C++ Runner: Debug Session",
-      "type": "cppdbg",
-      "request": "launch",
-      "args": [],
-      "stopAtEntry": false,
-      "externalConsole": false,
-      "cwd": "/home/anicha1/sources/linux/arch/x86/kernel",
-      "program": "/home/anicha1/sources/linux/arch/x86/kernel/build/Debug/outDebug",
-      "MIMode": "gdb",
-      "miDebuggerPath": "gdb",
-    }
   ]
 }
