@@ -26,6 +26,6 @@ qemu-system-x86_64 \
     -device usb-host,bus=ehci.0,hostbus="${usb_bus}",hostport="${usb_port}" \
     -virtfs local,path=${share_folder},mount_tag=share,security_model=passthrough,id=share \
     -net nic \
-    -smp 2 \
+    -smp 1 \
     ${debug}
 

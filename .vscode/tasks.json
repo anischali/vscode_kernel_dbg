@@ -29,8 +29,8 @@
             "args": [
                 "${workspaceRoot}/arch/x86_64/boot/bzImage",
                 "${workspaceRoot}/initrd.img",
+                "3",
                 "1",
-                "9.4.2",
                 "${workspaceRoot}",
                 "debug"
             ],
@@ -44,7 +44,8 @@
                     "endsPattern":"^(Starting Qemu)"
                 }
             },
-            "dependsOn": ["Setup Ramdisk"],
+            "dependsOrder": "sequence",
+            "dependsOn": ["Build kernel", "Setup Ramdisk"],
         }
     ],
 
