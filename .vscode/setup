@@ -46,6 +46,7 @@ for p in *.deb; do
     dpkg-deb -x $p ../
 done
 popd
+rm -rf packages
 find . | cpio --dereference -ov --format=newc | gzip --fast > ../initrd.img
 popd
 

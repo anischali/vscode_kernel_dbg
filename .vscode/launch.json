@@ -1,31 +1,48 @@
 {
-    "configurations": [
-
+  "configurations": [
+    {
+      "type": "cppdbg",
+      "name": "Debug kernel",
+      "request": "launch",
+      "cwd": "${workspaceRoot}",
+      "MIMode": "gdb",
+      "setupCommands": [
         {
-            "type": "cppdbg",
-            "name": "Debug kernel",
-            "request": "launch",
-            "cwd": "${workspaceRoot}",
-            "MIMode": "gdb",
-            "setupCommands": [
-                {
-                    "description": "Enable pretty-printing for gdb",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
-                },
-                {"text": "symbol-file ${workspaceRoot}/vmlinux"}
-            ],
-            "targetArchitecture": "x86_64",
-            "program": "${workspaceRoot}/vmlinux",
-            "miDebuggerServerAddress": "localhost:1234",
-            "additionalSOLibSearchPath": "${workspaceRoot}/**",
-            "sourceFileMap":{
-                "system_map": "${workspaceRoot}/System.map"
-            },
-            "symbolLoadInfo": {
-                "loadAll": true,
-                "exceptionList": ""
-            },
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        },
+        {
+          "text": "set remotetimeout 60000"
+        },
+        {
+          "text": "symbol-file ${workspaceRoot}/vmlinux"
         }
-    ],
+      ],
+      "targetArchitecture": "x86_64",
+      "program": "${workspaceRoot}/vmlinux",
+      "miDebuggerServerAddress": "localhost:1234",
+      "additionalSOLibSearchPath": "${workspaceRoot}/**",
+      "sourceFileMap": {
+        "system_map": "${workspaceRoot}/System.map"
+      },
+      "symbolLoadInfo": {
+        "loadAll": true,
+        "exceptionList": ""
+      },
+      "preLaunchTask": "Launch Qemu"
+    },
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "cppdbg",
+      "request": "launch",
+      "args": [],
+      "stopAtEntry": false,
+      "externalConsole": false,
+      "cwd": "/home/anicha1/sources/linux/arch/x86/kernel",
+      "program": "/home/anicha1/sources/linux/arch/x86/kernel/build/Debug/outDebug",
+      "MIMode": "gdb",
+      "miDebuggerPath": "gdb",
+    }
+  ]
 }

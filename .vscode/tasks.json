@@ -24,14 +24,26 @@
         {
             "label": "Launch Qemu",
             "type": "process",
+            "isBackground": true,
             "command":"${workspaceRoot}/.vscode/launch",
             "args": [
                 "${workspaceRoot}/arch/x86_64/boot/bzImage",
                 "${workspaceRoot}/initrd.img",
                 "1",
                 "9.4.2",
-                "${workspaceRoot}"
+                "${workspaceRoot}",
+                "debug"
             ],
+            "problemMatcher": {
+                "pattern": {
+                    "regexp": "^(Starting Qemu)",
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern":"^(Starting Qemu)",
+                    "endsPattern":"^(Starting Qemu)"
+                }
+            },
             "dependsOn": ["Setup Ramdisk"],
         }
     ],
