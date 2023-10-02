@@ -16,6 +16,19 @@
             "dependsOn":["Merge Defconfig"],
         },
         {
+            "label": "Build GDB Scripts",
+            "type": "cppbuild",
+            "command": "/usr/bin/make",
+            "args": ["-j", "$(nproc)", "scripts_gdb"],
+            "options": {
+                "cwd": "${workspaceRoot}"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+        },
+        {
             "label": "Setup Ramdisk",
             "type": "process",
             "command":"${workspaceRoot}/.vscode/setup",
@@ -58,7 +71,7 @@
                 }
             },
             "dependsOrder": "sequence",
-            "dependsOn": ["Setup Ramdisk", "Build kernel"],
+            "dependsOn": ["Setup Ramdisk", "Build kernel", "Build GDB Scripts"],
         }
     ],
 

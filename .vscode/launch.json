@@ -6,6 +6,7 @@
       "request": "launch",
       "cwd": "${workspaceRoot}",
       "MIMode": "gdb",
+      "stopAtEntry": true,
       "setupCommands": [
         {
           "description": "Enable pretty-printing for gdb",
@@ -13,17 +14,31 @@
           "ignoreFailures": true
         },
         {
-          "description": "Hardware Breakpoint on main",
-          "text": "-break-insert -h -f main",
-          "ignoreFailures": true
-        },
-        {
           "text": "set remotetimeout 60000"
         },
         {
-          "text": "symbol-file ${workspaceRoot}/vmlinux"
-        }
+          "text": "cd ${workspaceRoot}"
+        },
+        {
+          "text": "py sys.path.insert(0, \"${workspaceRoot}/scripts/gdb\")"
+        },
+        {
+          "text": "add-auto-load-safe-path ${workspaceRoot}"
+        },
+        {
+          "text": "source vmlinux-gdb.py"
+        },
+        {
+          "text": "lx-symbols",
+          "ignoreFailures": true
+        },
       ],
+      "logging": {
+        "trace": true,
+        "traceResponse": true,
+        "engineLogging": true,
+        "programOutput": true
+      },
       "targetArchitecture": "x86_64",
       "program": "${workspaceRoot}/vmlinux",
       "miDebuggerServerAddress": "localhost:1234",
