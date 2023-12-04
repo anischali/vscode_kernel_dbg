@@ -54,7 +54,7 @@
             "command":"${workspaceRoot}/.vscode/launch",
             "args": [
                 "${workspaceRoot}/arch/x86_64/boot/bzImage",
-                "${workspaceRoot}/initrd.img",
+                "${workspaceRoot}/initrd.ext4",
                 "3",
                 "1",
                 "${workspaceRoot}",

@@ -18,10 +18,11 @@ qemu-system-x86_64 \
     -display none \
     -serial mon:stdio \
     -cpu host \
-    -append "console=ttyS0 rw earlyprintk nokaslr nolapic_timer=1 noapictimer=1 disable_cpu_apicid=1" \
+    -drive file="${ramdisk}",format=raw,if=virtio \
+    -append "console=ttyS0 rw earlyprintk nokaslr root=/dev/vda init=/sbin/init" \
     -enable-kvm \
-    -initrd "${ramdisk}"  \
     -m 1024 \
+    -no-reboot \
     -device usb-ehci,id=ehci \
     -device usb-host,bus=ehci.0,hostbus="${usb_bus}",hostport="${usb_port}" \
     -virtfs local,path=${share_folder},mount_tag=shared,security_model=passthrough,id=shared \

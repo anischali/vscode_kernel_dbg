@@ -1,63 +1,106 @@
 #! /bin/bash
 
+curr_dir="$(pwd)/.vscode"
 dir="$1"
 force="$2"
 
 
-if [ -e "${dir}/initrd.img" ] && [ -z "${force}" ]; then
+cleanup() {
+    errno="0"
+    if [ -n "$1" ]; then
+        errno="$1"
+    fi
+    set +eE
+    echo "Exited with errno: $errno" > errno_code.txt
+    if [ -e "${dir}/initramfs" ]; then
+        rm -rf "${dir}/initramfs"
+    fi
+    if [ "$errno" = "2" ] && [ -e "${dir}/initrd.ext4" ]; then
+        rm -rf "${dir}/initrd.ext4"
+    fi
+    exit 0
+}
+
+ask_continue() {
+    read -n 1 -p "Press C key to continue..." key
+    if [ ! "${key}" = "c" ] && [ ! "${key}" = "C" ]; then
+        cleanup "2"
+    fi
+}
+
+set -eE
+trap cleanup SIGINT SIGQUIT SIGHUP SIGABRT
+
+if [ -e "${dir}/initrd.ext4" ] && [ -z "${force}" ]; then
     exit 0
 fi
 
-if [ -e "${dir}/initrd.img" ]; then
-    rm "${dir}/initrd.img"
+if [ -e "${dir}/initrd.ext4" ]; then
+    rm "${dir}/initrd.ext4"
 fi
 
 mkdir -p "${dir}/initramfs"
 pushd "${dir}/initramfs"
-mkdir dev sys proc bin sbin var run lib tmp etc
-curl -L -o bin/busybox https://busybox.net/downloads/binaries/1.21.1/busybox-x86_64
-cat << EOF > init
-#! /bin/busybox sh
+mkdir -p dev sys proc bin sbin var run lib tmp etc home/user home/test
 
-trap '' INT QUIT TSTP
+if [ ! -e "${curr_dir}/packages" ]; then
+    mkdir -p "${curr_dir}/packages"
+fi
+pushd "${curr_dir}/packages"
 
-mount -t devtmpfs devtmpfs /dev
-mount -t proc proc /proc
-mount -t sysfs sysfs /sys
-mount -t tmpfs tmpfs /tmp
-mount -t tmpfs tmpfs /run
+pkgs="$(cat ${curr_dir}/packages.list)"
 
-ip addr add 10.0.2.15/24 dev eth0
-ip link set dev eth0 up
-ip route add default via 10.0.2.2 dev eth0
+all_pkgs="$(apt-cache depends --recurse --no-recommends --no-suggests \
+  --no-conflicts --no-breaks --no-replaces --no-enhances \
+  --no-pre-depends ${pkgs} | grep "^\w")"
 
-mkdir -p ${dir}
-mount -t 9p -o trans=virtio,version=9p2000.L shared ${dir}
+echo "${all_pkgs}"
 
-cd "${dir}/"
+apt download ${all_pkgs}
 
-sh
-EOF
 
-cat << EOF > etc/inittab
-ttyS0::respawn:/bin/sh
-EOF
-
-chmod +x init
-chmod +x bin/busybox
-bin/busybox --install -s bin/
-
-mkdir packages
-pushd packages
-apt download libc6
-apt download evtest
 for p in *.deb; do 
-    dpkg-deb -x $p ../
+    dpkg-deb -x $p ${dir}/initramfs
 done
 popd
-rm -rf packages
-find . | cpio --dereference -ov --format=newc | gzip --fast > ../initrd.img
+
+ln -snr lib/systemd/systemd sbin/init
+
+cat << EOF > etc/inittab
+S0:2345:respawn:/sbin/getty ttyS0
+EOF
+
+echo "ramdisk" > etc/hostname
+
+
+cat << EOF > etc/passwd
+test::0:0:test,,,:/home/test:/bin/bash
+root:x:0:0:root,,,:/root:/bin/bash
+user:x:1000:1000:user,,,:/home/user:/bin/bash
+EOF
+
+root_pass="$(openssl passwd -6 root-1)"
+user_pass="$(openssl passwd -6 user-1)"
+cat << EOF > etc/shadow
+root:${user_pass}:19021:0:99999:7:::
+user:${root_pass}:19021:0:99999:7:::
+EOF
+
+chmod 640 etc/shadow
+chmod 644 etc/passwd
+
+ask_continue
+
+#find . | cpio --dereference -ov --format=newc | gzip --fast > ../initrd.img
+
+size="$(expr $(du -sk ${dir}/initramfs | cut -f 1) \* 2)"
+
+dd if=/dev/null of="${dir}/initrd.ext4" bs=1k seek=${size}
+
+mkfs.ext4 -d ${dir}/initramfs -t ext4 -b 1024 -m 0 -F ${dir}/initrd.ext4
+
+ask_continue
+
 popd
 
-rm -rf "${dir}/initramfs"
-
+cleanup 0
