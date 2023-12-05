@@ -1,7 +1,18 @@
 util-linux
 login
-systemd
+libpam0g
 libpam-modules
+libpam-pwquality
+libpam-runtime
+libpam-cracklib
+libpam-p11
+libpam-passwdqc
+libpam-pwdfile
+libpam-wrapper
+libpam-script
+libpam-apparmor
+libpam-cap
+libpam-alreadyloggedin
 p11-kit
 udev
 dbus
@@ -14,3 +25,4 @@ libtinfo6
 bash
 libc6
 evtest
+systemd

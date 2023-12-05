@@ -41,7 +41,7 @@ fi
 
 mkdir -p "${dir}/initramfs"
 pushd "${dir}/initramfs"
-mkdir -p dev sys proc bin sbin var run lib tmp etc home/user home/test
+mkdir -p dev sys proc bin sbin var run lib tmp etc home/root
 
 if [ ! -e "${curr_dir}/packages" ]; then
     mkdir -p "${curr_dir}/packages"
@@ -52,7 +52,7 @@ pkgs="$(cat ${curr_dir}/packages.list)"
 
 all_pkgs="$(apt-cache depends --recurse --no-recommends --no-suggests \
   --no-conflicts --no-breaks --no-replaces --no-enhances \
-  --no-pre-depends ${pkgs} | grep "^\w")"
+   ${pkgs} | grep "^\w")"
 
 echo "${all_pkgs}"
 
@@ -64,7 +64,7 @@ for p in *.deb; do
 done
 popd
 
-ln -snr lib/systemd/systemd sbin/init
+ln -snr bin/bash bin/sh
 
 cat << EOF > etc/inittab
 S0:2345:respawn:/sbin/getty ttyS0
@@ -72,22 +72,18 @@ EOF
 
 echo "ramdisk" > etc/hostname
 
-
 cat << EOF > etc/passwd
-test::0:0:test,,,:/home/test:/bin/bash
-root:x:0:0:root,,,:/root:/bin/bash
-user:x:1000:1000:user,,,:/home/user:/bin/bash
+root::0:0:root,,,:/home/root:/bin/bash
 EOF
 
-root_pass="$(openssl passwd -6 root-1)"
-user_pass="$(openssl passwd -6 user-1)"
 cat << EOF > etc/shadow
-root:${user_pass}:19021:0:99999:7:::
-user:${root_pass}:19021:0:99999:7:::
+
 EOF
 
 chmod 640 etc/shadow
 chmod 644 etc/passwd
+
+cp /etc/pam.d/common-* etc/pam.d/
 
 ask_continue
 
