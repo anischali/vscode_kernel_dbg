@@ -17,18 +17,6 @@
           "text": "set remotetimeout 60000"
         },
         {
-          "text": "cd ${workspaceRoot}"
-        },
-        {
-          "text": "py sys.path.insert(0, \"${workspaceRoot}/scripts/gdb\")"
-        },
-        {
-          "text": "add-auto-load-safe-path ${workspaceRoot}"
-        },
-        {
-          "text": "source vmlinux-gdb.py"
-        },
-        {
           "text": "lx-symbols",
           "ignoreFailures": true
         },
@@ -40,7 +28,7 @@
         "programOutput": true
       },
       "targetArchitecture": "x86_64",
-      "program": "${workspaceRoot}/vmlinux",
+      "program": "${workspaceRoot}/kernel.sym",
       "miDebuggerServerAddress": "localhost:1234",
       "additionalSOLibSearchPath": "${workspaceRoot}/**",
       "sourceFileMap": {

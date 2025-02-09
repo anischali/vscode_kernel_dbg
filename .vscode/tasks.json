@@ -16,6 +16,22 @@
             "dependsOn":["Merge Defconfig"],
         },
         {
+            "label": "Make symbols",
+            "type": "cppbuild",
+            "command":"/usr/bin/objcopy",
+            "args":["--only-keep-debug", "${workspaceRoot}/vmlinux", "${workspaceRoot}/kernel.sym"],
+            "options": {
+                "cwd": "${workspaceRoot}"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "dependsOrder": "sequence",
+            "dependsOn":["Build kernel"]
+            
+        },
+        {
             "label": "Build GDB Scripts",
             "type": "cppbuild",
             "command": "/usr/bin/make",
@@ -71,7 +87,7 @@
                 }
             },
             "dependsOrder": "sequence",
-            "dependsOn": ["Setup Ramdisk", "Build kernel", "Build GDB Scripts"],
+            "dependsOn": ["Setup Ramdisk", "Build kernel", "Make symbols", "Build GDB Scripts"],
         }
     ],
 
