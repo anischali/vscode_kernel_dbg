@@ -1,2 +1,3 @@
 KERNEL=="ttyUSB[0-9]*", OWNER="user_to_replace"
+KERNEL=="ttyS[0-9]*", OWNER="user_to_replace"
 SUBSYSTEM=="usb", KERNEL=="bus_to_replace-port_to_replace", OWNER="user_to_replace"
